@@ -18,10 +18,10 @@ page = Nokogiri::HTML(open("https://coinmarketcap.com/all/views/all/"))
 
 
 value_crypto = []
-page.xpath("//td[5]/a").each do |node|  value_crypto << node.text end
+page.xpath("//td[5]/a").each do |node| value_crypto << node.text end
 
 symbol_crypto = []
-page.xpath("//td[3]").each do |node|  symbol_crypto << node.text end
+page.xpath("//td[3]").each do |node| symbol_crypto << node.text end
 
 
 
