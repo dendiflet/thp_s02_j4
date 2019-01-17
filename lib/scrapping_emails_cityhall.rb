@@ -28,7 +28,25 @@ page = Nokogiri::HTML(open("https://www.annuaire-des-mairies.com/vosges.html"))
 #departement_doc.each{|link| puts link['href'] }
 
 news_links = page.css("tr").css("a").select{|link| link['class'] == "lientxt"}
-news_links.each{|link| puts " babrare  #{link['href']}" }
+#### ca reste un node avec trop de chose mais selectionne que les bons #######
+###########news_links.each{|link| puts " babrare  #{link['href']}" }				# ajout fonctionne
+#news_links.each {|link| puts link['href.slice(1..-1)']  }										#non, disparait
+
+#news_links.each{|link| puts "https://www.annuaire-des-mairies.com/#{link['href'].to_s.slice!(1..-1)}"}					######GGGGGOOOOOODDDDD
+mails_each_city = []
+news_links.each{|link| mails_each_city <<  "https://www.annuaire-des-mairies.com/#{link['href'].to_s.slice!(1..-1)}"}
+
+print mails_each_city
+
+
+
+# news_links.each{|link| puts " babrare  #{link['href']}" }
+
+# news_links.each{|link| puts " babrare  #{link['href']}" }
+
+# news_links.each{|link| puts " babrare  #{link['href']}" }
+
+# news_links.each{|link| puts " babrare  #{link['href']}" }
 
 
 
