@@ -11,11 +11,7 @@ require 'pry'
 require 'nokogiri'
 require 'open-uri'
 
-
 page = Nokogiri::HTML(open("https://coinmarketcap.com/all/views/all/"))
-
-
-
 
 value_crypto = []
 page.xpath("//td[5]/a").each do |node| value_crypto << node.text end

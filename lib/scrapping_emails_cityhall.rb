@@ -1,4 +1,5 @@
 puts "\e[H\e[2J"    #clear le terminal
+#binding.pry
 
 # le résult doit etre
 # hash des emails des mairies du 95
@@ -23,19 +24,38 @@ end
 
 #def all_commune
 
-  departement_doc = Nokogiri::HTML(open("https://www.annuaire-des-mairies.com/vosges.html"))
-  commune_list = departement_doc.css( "tr").css("a")
-#.each{|link| puts link['href'] }
+page = Nokogiri::HTML(open("https://www.annuaire-des-mairies.com/vosges.html"))
+#departement_doc.each{|link| puts link['href'] }
 
-puts  commune_list
+news_links = page.css("tr").css("a").select{|link| link['class'] == "lientxt"}
+news_links.each{|link| puts " babrare  #{link['href']}" }
 
 
-def city_mail
-  city_doc = Nokogiri::HTML(open("http://annuaire-des-mairies.com/88/epinal.html"))
-	cty_twnhall = city_doc.xpath("//tbody/tr[4]/td[2]")
-	print cty_twnhall
-	city_mail = cty_twnhall.select { |v| v =~ /[@]/ }
+
+
+
+
+
+#liens =  departement_doc.css("a.lientxt")['href']
+#puts liens																	#j'ai toute <a.....>
+#puts "#{liens.map do |i| i=i["href"] end}"
+#	puts liens
+
+
+#.css("a[@class=lientxt]/@href").attribute("href")
+
+# commune_list0 = 
+#puts commune_list0
+
+
+
+
+
+def mail_citytwnhll
+
+city_doc = Nokogiri::HTML(open("http://annuaire-des-mairies.com/88/epinal.html"))
+    cty_twnhall = city_doc.xpath("//tbody/tr[4]/td[2]")
+    print cty_twnhall
+    city_mail = cty_twnhall.select { |v| v =~ /[@]/ } 
+
 end
-
-#city_mail
-
