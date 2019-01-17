@@ -3,4 +3,6 @@ source "https://rubygems.org"
 	gem 'rspec'
 	gem 'pry'
 	gem 'rubocop', '~> 0.57.2' 
-	gem 'nokogiri
+	gem 'nokogiri'
+#	gem 'restclient'		#déja inclu dans la gem ruby?
+#	gem 'open-uri'			#déja inclu dan la gem ruby?
