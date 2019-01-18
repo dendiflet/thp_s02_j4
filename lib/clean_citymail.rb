@@ -1,67 +1,79 @@
 puts "\e[H\e[2J"    #clear le terminal
-#binding.pry
-
-# le résult doit etre
-# hash des emails des mairies du 95
-# a = [
-#   { "ville_1" => "email_1" },
-#   { "ville_2" => "email_2" }, 
-#   etc
-# ]
-
-#get_townhall_email(townhall_url)
-
 require 'pry'
 require 'nokogiri'
 require 'open-uri'
 
-
-
-
-
-def all_dep
-
+def all_dep					#ici c'est bon
 	scrappagetotal = Nokogiri::HTML(open("https://www.annuaire-des-mairies.com/"))
 	
 	#selectionne les liens du corp de page avec la class "lientxt"
 	dep_links_dirty = scrappagetotal.css("tbody").css("a").select{|link| link['class'] == "lientxt"}
 
-	mails_each_dep = []
+	mails_each_dep = []			
 	
 	#création de l'array de mails + mise en forme des mails
 	dep_links_dirty.each{|link| mails_each_dep << "https://www.annuaire-des-mairies.com/#{link['href'].to_s}"}
-	#puts mails_each_dep
+
+	print mails_each_dep
 
 	return mails_each_dep
 end
 
-def true_city_mail_list(dep_base_list)
 
-	dep_base_list.each do |mail|								#loop avec chaque mail de la liste
 
-		if check_page(mail) == true 							#verif du mail donné <-tjrs true donc set page exist = true
+def true_city_mail_list(dep_city_list_page)
+ 
+  dep_pages_full_list = []												#création de l'array vide
+
+	dep_city_list_page.each do |mail|								#loop avec chaque page de la liste des departements
+
+		page_exist = check_page(mail)									#verif de la 1ere
+		
+		puts "#{mail}"																#j'ai bien la 1ere adresse
+		puts "page_exist vaut #{page_exist} comme prévu"   #ne s'affiche pas
+
+
+		if page_exist == true 							#verif du mail donné <-tjrs true car 1ere donc set page exist = true
+		
+		puts "page_exist vaut toujours #{page_exist} !"
+		puts "ici c'est bon"					
+		puts "normalement ici il doit afficher que c'est un string ...#{mail.class}"
+		puts "ici je vais enregistrer le mail temporaire dans la nouvelle liste"			
+
+
 			dep_pages_full_list << mail 									#ajout a la full_list
+
+
+		puts "il devrait afficher la noouvelle liste en dessous"
+		print dep_pages_full_list
+
+
+			
 		end
+		#puts "tu va t\'afficher bordel #{dep_pages_full_list} ! !! ! "
 
 		i = 2																			#les pages supp commencent an -2.html
-		temp_dep_mail = ""
+		
+		#until page_exist == false do	
+		while page_exist != false  do		
+			temp_dep_mail = ""
+			temp_dep_mail = "#{mail.slice(0..-6)}-#{i}.html"		#modificaton du mail d'origine
 
-		until page_exist == false do		
+			page_exist = check_page(temp_dep_mail)									#fait tourner pour voir si la page existe
 
-			temp_dep_mail = dep_base_list.insert(-6;"-#{i}")		#modificaton du mail d'origine
-			
-			check_page(temp_dep_mail)									#fait tourner pour voir si la page existe
-			
 			if page_exist == true 									#si la page existe ajout a la liste
-				dep_pages_full_list << temp_dep_mail
-			i += 1 																	#iteration pour la prochaine verif
+				dep_pages_full_list << temp_dep_mail		
+				i = i + 1 													#iteration pour la prochaine verif
 			end
 
 		end
+
+
 	end
 
 	return dep_pages_full_list
 end
+
 
 
 def check_page(url)
@@ -69,14 +81,27 @@ def check_page(url)
     open(url)
   rescue OpenURI::HTTPError
     page_exist = false
+    puts page_exist
     return
   end
   	page_exist = true
+  	puts page_exist
   return
 end
 
 
+# def check_page(url)
+# 	begin
+#     open(url)
+#   	rescue Errno::ENOENT
+#     	page_exist = false
+#     return
+#   	page_exist = true
+#   	end
 
+#   puts "la je suis dans checkpage et page_existe devrait etre setté a #{page_exist}   <---- true"
+#   return
+# end
 
 def collect_all_citys_page()
 
@@ -93,7 +118,6 @@ def collect_all_citys_page()
 	#puts mails_each_city_dep_page_list
 	return mails_each_city_dep_page_list
 end
-
 
 def collect_all_citys_mail
 
@@ -112,25 +136,29 @@ def collect_all_citys_mail
 end
 
 def perform
-	city_list_page = all_dep			#recherche des mails de chaque departements
+	dep_city_list_page = all_dep			#recherche des mails de chaque departements
+	puts "ici c'est le nb de page de departement avant moulinette #{dep_city_list_page.length} "
 	
-	dep_pages_full_list = true_city_mail_list(city_list_page)		#il y avait plusieurs pages de communes ;-)
-	
-	dep_pages_full_list.each do |dep_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
-		full_city_page_list << collect_all_citys_page(dep_page)
-	end
+	# dep_pages_full_list = true_city_mail_list(dep_city_list_page)			#il y avait plusieurs pages de communes ;-)
+	# 	puts "ici c'est le nb de page de departement apres moulinette #{dep_pages_full_list.length} "
 
 
-		full_city_page_list.each do |city_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
-		full_city_mails_list << collect_all_citys_mail(city_page)
-	end
-	return full_city_mails_list
+	# dep_pages_full_list.each do |dep_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
+	# 	full_city_page_list << collect_all_citys_page(dep_page)
+	# end
+	# puts "ca ---> #{full_city_page_list} c'est le nb de communes en france"
 
+
+	# 	full_city_page_list.each do |city_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
+	# 	full_city_mails_list << collect_all_citys_mail(city_page)
+	# end
+	# return full_city_mails_list
 end
 
-full_list = perform
 
-print full_list
+
+full_list = perform
+#print full_list
 
 
 
