@@ -27,7 +27,7 @@ def true_city_mail_list(dep_city_list_page)
 		page_exist = check_page(mail)									#verif de la 1ere
 		
 		puts "#{mail}"																#j'ai bien la 1ere adresse
-		puts "page_exist vaut #{page_exist} comme prévu"   #ne s'affiche pas
+		puts "page_exist vaut #{page_exist} comme pas prévu"   #ne s'affiche pas
 
 		if page_exist == true 							#verif du mail donné <-tjrs true car 1ere donc set page exist = true
 		
@@ -36,8 +36,7 @@ def true_city_mail_list(dep_city_list_page)
 		puts "normalement ici il doit afficher que c'est un string ...#{mail.class}"
 		puts "ici je vais enregistrer le mail temporaire dans la nouvelle liste"			
 
-
-		dep_pages_full_list << mail 									#ajout a la full_list
+		dep_pages_full_list << mail 									#ajout a la liste complete
 
 		puts "il devrait afficher la noouvelle liste en dessous"
 		print dep_pages_full_list
@@ -45,22 +44,18 @@ def true_city_mail_list(dep_city_list_page)
 		end
 		#puts "tu va t\'afficher bordel #{dep_pages_full_list} ! !! ! "
 
-		i = 2																			#les pages supp commencent an -2.html
+		i = 1																		#les pages supp commencent an -2.html
 		
-		while page_exist != false  do		
+		while page_exist != false  do			#normalement setté a true par la précedente vérif
+			i = i + 1 													#iteration pour la prochaine verif
 			temp_dep_mail = ""
 			temp_dep_mail = "#{mail.slice(0..-6)}-#{i}.html"		#modificaton du mail d'origine
-
 			page_exist = check_page(temp_dep_mail)									#fait tourner pour voir si la page existe
-
 			if page_exist == true 									#si la page existe ajout a la liste
 				dep_pages_full_list << temp_dep_mail		
-				i = i + 1 													#iteration pour la prochaine verif
 			end
-
 		end
-
-
+		
 	end
 
 	return dep_pages_full_list
@@ -81,38 +76,6 @@ def check_page(url_to_check)
   return
 end
 
-def collect_all_citys_page(dep_page)
-
-	scrappagetotal = Nokogiri::HTML(open(dep_page))
-	
-	#selectionne les liens du corp de page avec la class "lientxt"
-	news_links_dirty = scrappagetotal.css("tr").css("a").select{|link| link['class'] == "lientxt"}
-
-	mails_each_city_dep_page_list = []
-	
-	#création de l'array de mails + mise en forme des mails
-	news_links_dirty.each{|link| mails_each_city_dep_page_list << "https://www.annuaire-des-mairies.com/#{link['href'].to_s.slice!(1..-1)}"}
-
-	#puts mails_each_city_dep_page_list
-	return mails_each_city_dep_page_list
-end
-
-def collect_all_citys_mail(city_page)
-
-	city_doc_all = Nokogiri::HTML(open("http://annuaire-des-mairies.com/88/epinal.html"))
-  #va chercher a peux pres au bon endroit
-  cty_twnhall = city_doc_all.xpath("//body/div/main/section[2]/div/table/tbody/tr[4]/td[2]") 		#ultra presci...
-  #puts cty_twnhall
-
-
-  city_mail = []
-  #transfo en string (car c'est encore un node), ###selectionne la bonne####fini#### et clean car encore les <td>
-  city_mail = cty_twnhall.to_s.slice(4...-5)										#### ceci ne fonctionne pas -->  .select { |v| v =~ /[@]/ } 
-  
-  #puts city_mail
-  return city_mail
-end
-
 
 
 def perform
@@ -122,17 +85,6 @@ def perform
 	dep_pages_full_list = true_city_mail_list(dep_city_list_page)			#il y avait plusieurs pages de communes ;-)
 	puts "ici c'est le nb de page de departement apres moulinette #{dep_pages_full_list.length} "
 
-
-	dep_pages_full_list.each do |dep_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
-		full_city_page_list << collect_all_citys_page(dep_page)
-	end	
-	puts "ca ---> #{full_city_page_list} c'est le nb de communes en france"
-	
-	full_city_page_list.each do |city_page|															#collecte des liens de chaque mairies avec une boucle pour chaque
-		full_city_mails_list << collect_all_citys_mail(city_page)
-	end
-	
-	return full_city_mails_list
 end
 
 
